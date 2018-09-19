@@ -31,6 +31,8 @@
             this.lblCompany = new System.Windows.Forms.Label();
             this.btnON = new System.Windows.Forms.Button();
             this.btnOFF = new System.Windows.Forms.Button();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.ckbMend = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // lblCompany
@@ -67,11 +69,33 @@
             this.btnOFF.UseVisualStyleBackColor = true;
             this.btnOFF.Click += new System.EventHandler(this.btnOFF_Click);
             // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Enabled = false;
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker1.Location = new System.Drawing.Point(115, 427);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(167, 22);
+            this.dateTimePicker1.TabIndex = 3;
+            // 
+            // ckbMend
+            // 
+            this.ckbMend.AutoSize = true;
+            this.ckbMend.Location = new System.Drawing.Point(49, 430);
+            this.ckbMend.Name = "ckbMend";
+            this.ckbMend.Size = new System.Drawing.Size(60, 16);
+            this.ckbMend.TabIndex = 4;
+            this.ckbMend.Text = "補打卡";
+            this.ckbMend.UseVisualStyleBackColor = true;
+            this.ckbMend.CheckedChanged += new System.EventHandler(this.ckbMend_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(393, 423);
+            this.ClientSize = new System.Drawing.Size(393, 486);
+            this.Controls.Add(this.ckbMend);
+            this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.btnOFF);
             this.Controls.Add(this.btnON);
             this.Controls.Add(this.lblCompany);
@@ -87,6 +111,8 @@
         private System.Windows.Forms.Label lblCompany;
         private System.Windows.Forms.Button btnON;
         private System.Windows.Forms.Button btnOFF;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.CheckBox ckbMend;
     }
 }
 

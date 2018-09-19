@@ -18,6 +18,7 @@ namespace PunchCard
         {
             InitializeComponent();
             lblCompany.Text = ConfigurationManager.AppSettings["CompanyName"];
+            dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm:ss";
         }
 
         private void btnON_Click(object sender, EventArgs e)
@@ -27,24 +28,43 @@ namespace PunchCard
                 try
                 {
                     WebCommModel model = new WebCommModel();
-                    model.WBC_SERNO = My.GenSerNo();
-                    model.WBC_DATE = DateTime.Now.AddMinutes(-1).ToString("yyyy-MM-dd"); ;
-                    model.WBC_CLOCKIN = DateTime.Now.ToString("HH:mm");
-
-                    if(WebCommDAL.GetSernoByDate(connection , DateTime.Now.ToString("yyyy-MM-dd")) != string.Empty)
+                    if(ckbMend.Checked)
                     {
-                        MessageBox.Show("今日已打卡過!");
-                        return;
-                    }
+                        model.WBC_SERNO = My.GenSerNo();
+                        DateTime d = DateTime.Parse(dateTimePicker1.Value.ToString());
+                        model.WBC_DATE = d.ToString("yyyy-MM-dd"); ;
+                        model.WBC_CLOCKIN = d.ToString("HH:mm");
 
-
-                    if( WebCommDAL.Add(connection, model, PunchCard.ON)>0)
-                    {
-                        MessageBox.Show(string.Format("打卡上班 時間:{0} {1}", model.WBC_DATE, model.WBC_CLOCKIN));
+                        WebCommDAL.Delete(connection, model.WBC_DATE);
+                        if (WebCommDAL.Add(connection, model, PunchCard.ON) > 0)
+                        {
+                            MessageBox.Show(string.Format("補打卡上班 時間:{0} {1}", model.WBC_DATE, model.WBC_CLOCKIN));
+                        }
+                        else
+                        {
+                            MessageBox.Show("打卡發生異常!");
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("打卡發生異常!");
+                        model.WBC_SERNO = My.GenSerNo();
+                        model.WBC_DATE = DateTime.Now.ToString("yyyy-MM-dd"); ;
+                        model.WBC_CLOCKIN = DateTime.Now.AddMinutes(-1).ToString("HH:mm");
+
+                        if (WebCommDAL.GetSernoByDate(connection, DateTime.Now.ToString("yyyy-MM-dd")) != string.Empty)
+                        {
+                            MessageBox.Show("今日已打卡過!");
+                            return;
+                        }
+
+                        if (WebCommDAL.Add(connection, model, PunchCard.ON) > 0)
+                        {
+                            MessageBox.Show(string.Format("打卡上班 時間:{0} {1}", model.WBC_DATE, model.WBC_CLOCKIN));
+                        }
+                        else
+                        {
+                            MessageBox.Show("打卡發生異常!");
+                        }
                     }
                     
                 }
@@ -61,9 +81,21 @@ namespace PunchCard
             {
                 try
                 {
-                    string date = DateTime.Now.ToString("yyyy-MM-dd");
-                    string time = DateTime.Now.ToString("HH:mm");
-                    string serno = WebCommDAL.GetSernoByDate(connection, date);
+                    string date, time, serno;
+                    DateTime d = DateTime.Parse(dateTimePicker1.Value.ToString());
+                    if (ckbMend.Checked)
+                    {
+                        date = d.ToString("yyyy-MM-dd");
+                        time = d.ToString("HH:mm");
+                        serno = WebCommDAL.GetSernoByDate(connection, date);
+                    }
+                    else
+                    {
+                        date = DateTime.Now.ToString("yyyy-MM-dd");
+                        time = DateTime.Now.ToString("HH:mm");
+                        serno = WebCommDAL.GetSernoByDate(connection, date);
+                    }
+
 
                     if (string.IsNullOrEmpty(serno))
                     {
@@ -84,7 +116,7 @@ namespace PunchCard
                         command.Parameters.AddWithValue("@WBC_SERNO", serno);
                         if(command.ExecuteNonQuery()>0)
                         {
-                            MessageBox.Show(string.Format("打卡下班 時間:{0} {1}", date, time));
+                            MessageBox.Show(string.Format("{0}打卡下班 時間:{1} {2}",ckbMend.Checked?"補":"", date, time));
                         }
                         else
                         {
@@ -99,6 +131,14 @@ namespace PunchCard
                     MessageBox.Show(ex.Message);
                 }
             }
+        }
+
+        private void ckbMend_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ckbMend.Checked)
+                dateTimePicker1.Enabled = true;
+            else
+                dateTimePicker1.Enabled = false;
         }
     }
 }

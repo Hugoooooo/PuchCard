@@ -65,5 +65,23 @@ namespace PunchCard
             var a = cmd.ExecuteScalar();
             return (string)(cmd.ExecuteScalar() ?? string.Empty);
         }
+
+        public static int Delete(SqlConnection connection, string date)
+        {
+            string strSql = @"
+                DELETE FROM [dbo].[WEBCOMM]
+                WHERE WBC_DATE = @WBC_DATE";
+            SqlCommand command = new SqlCommand(strSql, connection);
+            if (connection.State != System.Data.ConnectionState.Open)
+                connection.Open();
+
+            if (string.IsNullOrEmpty(date))
+                command.Parameters.AddWithValue("@WBC_DATE", DBNull.Value);
+            else
+                command.Parameters.AddWithValue("@WBC_DATE", date);
+
+            return command.ExecuteNonQuery();
+
+        }
     }
 }
